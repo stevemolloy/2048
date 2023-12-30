@@ -68,7 +68,9 @@ public:
     }
     int i1, j1;
     getARandomSquare(&i1, &j1);
-    exponents[i1][j1] = 4;
+    exponents[i1][j1] = 1;
+    getARandomSquare(&i1, &j1);
+    exponents[i1][j1] = 1;
   }
 
   void MoveRight() {
@@ -86,7 +88,9 @@ public:
     }
     int i1, j1;
     getARandomSquare(&i1, &j1);
-    exponents[i1][j1] = 4;
+    exponents[i1][j1] = 1;
+    getARandomSquare(&i1, &j1);
+    exponents[i1][j1] = 1;
   }
 
   void MoveUp() {
@@ -104,7 +108,9 @@ public:
     }
     int i1, j1;
     getARandomSquare(&i1, &j1);
-    exponents[i1][j1] = 4;
+    exponents[i1][j1] = 1;
+    getARandomSquare(&i1, &j1);
+    exponents[i1][j1] = 1;
   }
 
   void MoveDown() {
@@ -122,7 +128,9 @@ public:
     }
     int i1, j1;
     getARandomSquare(&i1, &j1);
-    exponents[i1][j1] = 4;
+    exponents[i1][j1] = 1;
+    getARandomSquare(&i1, &j1);
+    exponents[i1][j1] = 1;
   }
 
   int getARandomSquare(int *i1, int *j1) {
@@ -132,6 +140,7 @@ public:
     int counter = 0;
     for (size_t i=0; i<GRIDSIZE; i++) {
       for (size_t j=0; j<GRIDSIZE; j++) {
+        if (exponents[i][j] != 0) continue;
         if (square1 == counter) {
           *i1 = i;
           *j1 = j;
@@ -159,7 +168,12 @@ private:
     size_t result = 0;
     for (size_t i=0; i<GRIDSIZE; i++) {
       for (size_t j=0; j<GRIDSIZE; j++) {
-        if (exponents[i][j] == 0) result++;
+        if (exponents[i][j] == 0) {
+          TraceLog(LOG_INFO, "i = %zu, j = %zu is empty", i, j);
+          result++;
+        } else {
+          TraceLog(LOG_INFO, "i = %zu, j = %zu has a square", i, j);
+        }
       }
     }
     return result;
