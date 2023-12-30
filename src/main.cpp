@@ -1,4 +1,8 @@
+#include <cmath>
+#include <format>
 #include <iostream>
+#include <random>
+#include <string>
 
 #include "raylib.h"
 
@@ -39,6 +43,11 @@ public:
         int posx = i*width + BORDERWIDTH;
         int posy = j*height + GRIDSTART + BORDERWIDTH;
         DrawRectangle(posx, posy, box_width, box_height, get_colour(exponents[i][j]));
+        if (exponents[i][j] > 0) {
+          std::string text = std::format("{}", Value(i, j));
+          int text_width = MeasureText(text.c_str(), 64);
+          DrawText(text.c_str(), posx + box_width/2 - text_width/2, posy + box_height/2 - 32, 64, BLACK);
+        }
       }
     }
   }
@@ -46,6 +55,15 @@ public:
 private:
   int width, height, box_width, box_height;
   size_t exponents[GRIDSIZE][GRIDSIZE];
+
+  void Init() {
+    exponents[1][2] = 1;
+    exponents[0][1] = 1;
+  }
+
+  int Value(int i, int j) {
+    return 1 << exponents[i][j];
+  }
 };
 
 GameGrid::GameGrid() {
@@ -58,6 +76,8 @@ GameGrid::GameGrid() {
       exponents[i][j] = 0;
     }
   }
+
+  Init();
 }
 
 GameGrid::~GameGrid() {
