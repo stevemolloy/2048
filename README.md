@@ -9,3 +9,5 @@ $ make
 $ ./bin/2048
 ```
 
+![]("./images/screenshot.png")
+
