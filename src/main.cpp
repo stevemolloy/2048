@@ -33,6 +33,27 @@ Color get_colour(size_t exp) {
   return colours[exp % 11];
 }
 
+class Square {
+public:
+  size_t exponent;
+  bool has_merged;
+
+  Square();
+  ~Square();
+
+  bool Occupied() {
+    return exponent > 0;
+  }
+
+private:
+};
+
+Square::Square() {
+}
+
+Square::~Square() {
+}
+
 class GameGrid {
 public:
   GameGrid();
@@ -43,8 +64,8 @@ public:
       for (size_t j=0; j<GRIDSIZE; j++) {
         int posx = i*width + BORDERWIDTH;
         int posy = j*height + GRIDSTART + BORDERWIDTH;
-        DrawRectangle(posx, posy, box_width, box_height, get_colour(exponents[i][j]));
-        if (exponents[i][j] > 0) {
+        DrawRectangle(posx, posy, box_width, box_height, get_colour(squares[i][j].exponent));
+        if (squares[i][j].exponent > 0) {
           std::string text = std::format("{}", Value(i, j));
           int text_width = MeasureText(text.c_str(), 64);
           DrawText(text.c_str(), posx + box_width/2 - text_width/2, posy + box_height/2 - 32, 64, BLACK);
@@ -53,94 +74,77 @@ public:
     }
   }
 
-  void MoveLeft() {
-    for (int i=GRIDSIZE-1; i>0; i--) {
-      for (int j=0; j<GRIDSIZE; j++) {
-        if (exponents[i][j] == 0) continue;
-        if (exponents[i-1][j] == 0) {
-          exponents[i-1][j] = exponents[i][j];
-          exponents[i][j] = 0;
-        } else if (exponents[i-1][j] == exponents[i][j]) {
-          exponents[i-1][j] += 1;
-          exponents[i][j] = 0;
+  bool MoveLeft() {
+    bool squares_were_moved = false;
+    for (size_t j=0; j<GRIDSIZE; j++) {
+      int i = 1;
+      while (i<GRIDSIZE) {
+        if (squares[i][j].Occupied() && !squares[i-1][j].Occupied()) {
+          squares_were_moved = true;
+          squares[i-1][j].exponent = squares[i][j].exponent;
+          squares[i][j].exponent = 0;
+          if (i>1) i -= 1;
+        } else {
+          i++;
         }
       }
     }
-    int i1, j1;
-    getARandomSquare(&i1, &j1);
-    exponents[i1][j1] = 1;
-    getARandomSquare(&i1, &j1);
-    exponents[i1][j1] = 1;
+    return squares_were_moved;
   }
 
   void MoveRight() {
-    for (int i=0; i<GRIDSIZE-1; i++) {
-      for (int j=0; j<GRIDSIZE; j++) {
-        if (exponents[i][j] == 0) continue;
-        if (exponents[i+1][j] == 0) {
-          exponents[i+1][j] = exponents[i][j];
-          exponents[i][j] = 0;
-        } else if (exponents[i+1][j] == exponents[i][j]) {
-          exponents[i+1][j] += 1;
-          exponents[i][j] = 0;
+    for (size_t j=0; j<GRIDSIZE; j++) {
+      int i = GRIDSIZE - 2;
+      while (i >= 0) {
+        if (squares[i][j].Occupied() && !squares[i+1][j].Occupied()) {
+          squares[i+1][j].exponent = squares[i][j].exponent;
+          squares[i][j].exponent = 0;
+          if (i < GRIDSIZE-2) i += 1;
+        } else {
+          i--;
         }
       }
     }
-    int i1, j1;
-    getARandomSquare(&i1, &j1);
-    exponents[i1][j1] = 1;
-    getARandomSquare(&i1, &j1);
-    exponents[i1][j1] = 1;
   }
 
   void MoveUp() {
-    for (int i=0; i<GRIDSIZE; i++) {
-      for (int j=GRIDSIZE-1; j>0; j--) {
-        if (exponents[i][j] == 0) continue;
-        if (exponents[i][j-1] == 0) {
-          exponents[i][j-1] = exponents[i][j];
-          exponents[i][j] = 0;
-        } else if (exponents[i][j-1] == exponents[i][j]) {
-          exponents[i][j-1] += 1;
-          exponents[i][j] = 0;
+    for (size_t i=0; i<GRIDSIZE; i++) {
+      int j = 1;
+      while (j < GRIDSIZE) {
+        if (squares[i][j].Occupied() && !squares[i][j-1].Occupied()) {
+          squares[i][j-1].exponent = squares[i][j].exponent;
+          squares[i][j].exponent = 0;
+          if (j>1) j -= 1;
+        } else {
+          j++;
         }
       }
     }
-    int i1, j1;
-    getARandomSquare(&i1, &j1);
-    exponents[i1][j1] = 1;
-    getARandomSquare(&i1, &j1);
-    exponents[i1][j1] = 1;
   }
 
   void MoveDown() {
-    for (int i=0; i<GRIDSIZE; i++) {
-      for (int j=0; j<GRIDSIZE-1; j++) {
-        if (exponents[i][j] == 0) continue;
-        if (exponents[i][j+1] == 0) {
-          exponents[i][j+1] = exponents[i][j];
-          exponents[i][j] = 0;
-        } else if (exponents[i][j+1] == exponents[i][j]) {
-          exponents[i][j+1] += 1;
-          exponents[i][j] = 0;
+    for (size_t i=0; i<GRIDSIZE; i++) {
+      int j = GRIDSIZE - 2;
+      while (j >= 0) {
+        if (squares[i][j].Occupied() && !squares[i][j+1].Occupied()) {
+          squares[i][j+1].exponent = squares[i][j].exponent;
+          squares[i][j].exponent = 0;
+          if (j < GRIDSIZE-2) j += 1;
+        } else {
+          j--;
         }
       }
     }
-    int i1, j1;
-    getARandomSquare(&i1, &j1);
-    exponents[i1][j1] = 1;
-    getARandomSquare(&i1, &j1);
-    exponents[i1][j1] = 1;
   }
 
   int getARandomSquare(int *i1, int *j1) {
-    int empty_squares = CountEmptySquare();
+    int empty_squares = CountEmptySquares();
     if (empty_squares < 1) return -1;
     int square1 = rand() % empty_squares;
     int counter = 0;
     for (size_t i=0; i<GRIDSIZE; i++) {
       for (size_t j=0; j<GRIDSIZE; j++) {
-        if (exponents[i][j] != 0) continue;
+        if (squares[i][j].exponent != 0) continue;
         if (square1 == counter) {
           *i1 = i;
           *j1 = j;
@@ -153,26 +157,38 @@ public:
 
 private:
   int width, height, box_width, box_height;
-  size_t exponents[GRIDSIZE][GRIDSIZE];
+  Square squares[GRIDSIZE][GRIDSIZE];
 
   void Init() {
-    exponents[1][2] = 1;
-    exponents[0][1] = 1;
+    squares[2][2].exponent = 1;
+    squares[2][1].exponent = 1;
+  }
+
+  void StepLeft() {
+    for (int i=1; i<GRIDSIZE; i++) {
+      for (int j=0; j<GRIDSIZE; j++) {
+        if (squares[i][j].exponent == 0) continue;
+        if (squares[i-1][j].exponent == 0) {
+          squares[i-1][j].exponent = squares[i][j].exponent;
+          squares[i][j].exponent = 0;
+        } else if (squares[i-1][j].exponent == squares[i][j].exponent) {
+          squares[i-1][j].exponent += 1;
+          squares[i][j].exponent = 0;
+        }
+      }
+    }
   }
 
   int Value(int i, int j) {
-    return 1 << exponents[i][j];
+    return 1 << squares[i][j].exponent;
   }
 
-  int CountEmptySquare() {
+  int CountEmptySquares() {
     size_t result = 0;
     for (size_t i=0; i<GRIDSIZE; i++) {
       for (size_t j=0; j<GRIDSIZE; j++) {
-        if (exponents[i][j] == 0) {
-          TraceLog(LOG_INFO, "i = %zu, j = %zu is empty", i, j);
+        if (!squares[i][j].Occupied()) {
           result++;
-        } else {
-          TraceLog(LOG_INFO, "i = %zu, j = %zu has a square", i, j);
         }
       }
     }
@@ -187,7 +203,7 @@ GameGrid::GameGrid() {
   box_height = box_width;
   for (size_t i=0; i<GRIDSIZE; i++) {
     for (size_t j=0; j<GRIDSIZE; j++) {
-      exponents[i][j] = 0;
+      squares[i][j].exponent = 0;
     }
   }
 
