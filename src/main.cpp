@@ -1,12 +1,3 @@
-#include <array>
-#include <cassert>
-#include <cmath>
-#include <cstdlib>
-#include <format>
-#include <iostream>
-#include <random>
-#include <string>
-
 #include "raylib.h"
 
 #include "gamegrid.h"
