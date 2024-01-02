@@ -3,55 +3,33 @@
 #include "gamegrid.h"
 
 int main(void) {
-  GameGrid grid = GameGrid();
-
-  InitWindow(window_width, window_height, "2048 by Stephen Molloy");
-  SetTargetFPS(60);
+  GameGrid grid;
+  grid.RaylibInit();
 
   while (!WindowShouldClose()) {
     if (IsKeyPressed(KEY_LEFT))  {
-      bool squares_were_moved = grid.MoveLeft();
-      squares_were_moved     |= grid.CompressLeft();
-      squares_were_moved     |= grid.MoveLeft();
-      if (squares_were_moved) {
-        int i, j;
-        grid.getARandomSquare(&i, &j);
-        grid.AddNewSquare(i, j);
+      if (grid.MoveLeft()) {
+        grid.AddRandomSquare();
       }
     }
     if (IsKeyPressed(KEY_RIGHT)) {
-      bool squares_were_moved = grid.MoveRight();
-      squares_were_moved     |= grid.CompressRight();
-      squares_were_moved     |= grid.MoveRight();
-      if (squares_were_moved) {
-        int i, j;
-        grid.getARandomSquare(&i, &j);
-        grid.AddNewSquare(i, j);
+      if (grid.MoveRight()){
+        grid.AddRandomSquare();
       }
     }
     if (IsKeyPressed(KEY_UP)) {
-      bool squares_were_moved = grid.MoveUp();
-      squares_were_moved     |= grid.CompressUp();
-      squares_were_moved     |= grid.MoveUp();
-      if (squares_were_moved) {
-        int i, j;
-        grid.getARandomSquare(&i, &j);
-        grid.AddNewSquare(i, j);
+      if (grid.MoveUp()) {
+        grid.AddRandomSquare();
       }
     }
     if (IsKeyPressed(KEY_DOWN)) {
-      bool squares_were_moved = grid.MoveDown();
-      squares_were_moved     |= grid.CompressDown();
-      squares_were_moved     |= grid.MoveDown();
-      if (squares_were_moved) {
-        int i, j;
-        grid.getARandomSquare(&i, &j);
-        grid.AddNewSquare(i, j);
+      if (grid.MoveDown()) {
+        grid.AddRandomSquare();
       }
     }
+
     BeginDrawing();
-    ClearBackground(background_colour);
-    grid.Draw();
+      grid.Draw();
     EndDrawing();
   }
 
